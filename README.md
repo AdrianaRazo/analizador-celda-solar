@@ -61,7 +61,7 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 1. **📥 Descarga VS Code**: https://code.visualstudio.com/
 2. **📦 Descarga este proyecto**: Botón "Code" → "Download ZIP" → Extrae la carpeta
 3. **📂 Abre en VS Code**: `File` → `Open Folder...` → Selecciona la carpeta del proyecto
-4. **⚡ Abre terminal**: `Ctrl + `` ` (o `View` → `Terminal`)
+4. **⚡ Abre terminal**: `Ctrl + `T` ` (o `View` → `Terminal`)
 5. **🔧 Instala dependencias**:
    ```powershell
    # Opción A: PowerShell (recomendado)
@@ -85,9 +85,9 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 1. **🐍 Instala Python**: 
    - **Microsoft Store**: Busca "Python 3.11" 
    - **Web oficial**: https://python.org (marca "Add to PATH")
-2. **📦 Descarga el proyecto** como ZIP y extráelo
+2. **📦 Descarga el proyecto** "Download ZIP" → Extrae la carpeta
 3. **🖱️ Doble clic** en `install.bat` para instalar
-4. **🖱️ Doble clic** en `run.bat` para ejecutar
+4. **🖱️ Al finalizar la instalación doble clic** en `run.bat` para ejecutar
 
 ### ⚡ Solución Rápida de Problemas en Windows
 - **"Python no encontrado"**: Instala desde Microsoft Store

@@ -114,21 +114,21 @@ El programa calcula y muestra:
 4. **Abre la terminal integrada** (`Ctrl + `` ` o `View > Terminal`)
 5. **Ejecuta en la terminal**:
    ```powershell
-   # Para PowerShell (recomendado)
+   # Opción 1 Para PowerShell (recomendado)
    .\install.ps1
    
-   # O para Command Prompt
+   # Opción 2 para Command Prompt
    install.bat
    ```
 6. **Una vez instalado, ejecuta**:
    ```powershell
-   # Para PowerShell
+   # Opción 1 Para PowerShell
    .\run.ps1
    
-   # O para Command Prompt  
+   # Opción 2 para Command Prompt  
    run.bat
    
-   # O usar tareas de VS Code: Ctrl+Shift+P → "Tasks: Run Task" → "Ejecutar Analizador"
+   # Opción 3 usar tareas de VS Code: Ctrl+Shift+P → "Tasks: Run Task" → "Ejecutar Analizador"
    ```
 
 **Opción 2: Sin VS Code**
@@ -169,7 +169,7 @@ code .
 # Usar terminal integrada (Ctrl + ` )
 python graph_I_V.py
 
-# O usar tareas: Ctrl+Shift+P → "Tasks: Run Task" → "Ejecutar Analizador"
+# Opción para usar tareas: Ctrl+Shift+P → "Tasks: Run Task" → "Ejecutar Analizador"
 ```
 
 ---
@@ -178,7 +178,7 @@ python graph_I_V.py
 
 ### Método 1: Cargar datos desde archivo CSV (Recomendado) 📊
 
-¡NUEVO! Ahora puedes cargar tus datos experimentales directamente desde archivos CSV:
+   Ahora puedes cargar tus datos experimentales directamente desde archivos CSV:
 
 1. **Configura para usar CSV**:
    - Abre `config.py` en VS Code
@@ -305,16 +305,16 @@ sudo apt install python3 python3-pip
 ### Linux (CentOS/RHEL/Fedora) 🐧
 ```bash
 sudo yum install python3 python3-pip
-# O para versiones nuevas:
+# Opción para versiones nuevas:
 sudo dnf install python3 python3-pip
 ```
 
 ### macOS 🍎
 ```bash
-# Con Homebrew (recomendado)
+# Opción 1 Con Homebrew (recomendado)
 brew install python3
 
-# O descarga desde python.org
+# Opción 2 descarga desde python.org
 ```
 
 ---
@@ -444,16 +444,16 @@ V;I
 
 ### ❌ "No module named 'numpy/matplotlib/scipy'"
 - Ejecuta: `pip install -r requirements.txt`
-- O individualmente: `pip install numpy matplotlib scipy`
+- Opción individualmente: `pip install numpy matplotlib scipy`
 
 ### ❌ "Error de permisos" (Linux/macOS)
 - Ejecuta: `chmod +x install.sh run.sh`
-- O usa: `python3 graph_I_V.py` directamente
+- Opción usa: `python3 graph_I_V.py` directamente
 
 ### ❌ "Error de permisos PowerShell" (Windows)
 - Abre PowerShell como Administrador
 - Ejecuta: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-- O usa los archivos .bat en su lugar
+- Opción usa los archivos .bat en su lugar
 
 ### ❌ "Los arrays deben tener la misma longitud"
 - Verifica que voltajes y corrientes tengan el mismo número de valores

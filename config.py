@@ -16,14 +16,14 @@
 # ==========================================
 
 # ¿Usar archivo CSV para cargar datos?
-usar_archivo_csv = False  # Cambiar a True para usar CSV
+usar_archivo_csv = True  # Cambiar a True para usar CSV
 
 # Archivo CSV con datos (solo si usar_archivo_csv = True)
 # El archivo puede tener formato:
 # - Columnas: V,I o Voltage,Current o Voltaje,Corriente 
 # - Separadores: coma, punto y coma o tabulación
 # - Con o sin encabezados
-archivo_csv = "datos_medidos.csv"  # Cambia por la ruta de tu archivo
+archivo_csv = "ejemplo2.csv"  # Cambia por la ruta de tu archivo
 
 # ==========================================
 # DATOS DIRECTOS (solo si usar_archivo_csv = False)
@@ -40,8 +40,8 @@ corrientes = [0.5, 0.48, 0.45, 0.40, 0.30, 0.0]
 # ==========================================
 
 # Condiciones de medición (opcional para calcular eficiencia)
-irradiancia = 1000  # W/m² (1000 para condiciones estándar STC)
-area_celda = 0.01   # m² (área de la celda solar en metros cuadrados)
+irradiancia = 1.9  # W/m² (1000 para condiciones estándar STC)
+area_celda = 9e-6  # m² (área de la celda solar en metros cuadrados)
 
 # Configuración de las gráficas
 titulo_grafica = "Análisis de Celda Solar"

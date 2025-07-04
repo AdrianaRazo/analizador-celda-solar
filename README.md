@@ -27,9 +27,9 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 ### 🎯 ¿Para quién es este programa?
 
 - 🎓 **Estudiantes** de ingeniería y física
-- 🔬 **Investigadores** en energías renovables
-- 👨‍🏫 **Profesores** que enseñan sobre celdas solares
-- 🏭 **Técnicos** en laboratorios de fotovoltaicos
+- 🔬 **Investigadoras e investigadores** en energías renovables
+- 👩‍🏫👨‍🏫 **Profesorado** que enseña sobre celdas solares
+- 🏭 **Personal técnico** en laboratorios de fotovoltaicos
 - 💼 **Profesionales** del sector solar
 
 ---
@@ -42,15 +42,15 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 
 | Sistema | Enlace Directo | Descripción |
 |---------|---------------|-------------|
-| 🪟 | **[Windows 10/11](#-windows-1011)** | Para usuarios con poca experiencia |
+| 🪟 | **[Windows 10/11](#-windows-1011)** | Para personas con poca experiencia |
 | 🐧 | **[Linux](#-linux-ubuntudebian)** | Ubuntu, Debian, instalación rápida |
 | 🍎 | **[macOS](#-macos)** | Mac Intel y Apple Silicon |
-| 👨‍💻 | **[Desarrolladores](#-para-desarrolladores)** | Si ya usas Python |
+| 👩‍💻👨‍💻 | **[Desarrolladoras/es](#-para-desarrolladoras-y-desarrolladores)** | Si ya usas Python |
 
 </div>
 
 > 💡 **¿Primera vez con Python?** → Empieza con [Windows](#-windows-1011) o [Linux](#-linux-ubuntudebian)  
-> 🚀 **¿Quieres lo más rápido?** → Ve a [Desarrolladores](#-para-desarrolladores)
+> 🚀 **¿Quieres lo más rápido?** → Ve a [Desarrolladoras/es](#-para-desarrolladoras-y-desarrolladores)
 
 ---
 
@@ -58,41 +58,90 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 
 ### Opción 1: Con VS Code (Recomendado para principiantes)
 
-1. **📥 Descarga VS Code**: https://code.visualstudio.com/
-2. **📦 Descarga este proyecto**: Botón "Code" → "Download ZIP" → Extrae la carpeta
-3. **📂 Abre en VS Code**: `File` → `Open Folder...` → Selecciona la carpeta del proyecto
-4. **⚡ Abre terminal**: `Ctrl + `T` ` (o `View` → `Terminal`)
-5. **🔧 Instala dependencias**:
-   ```powershell
-   # Opción A: PowerShell (recomendado)
+**📋 Pasos detallados:**
+
+1. **🐍 Instala Python primero**:
+   - **Método más fácil**: Ve a Microsoft Store → Busca "Python 3.11" → Haz clic en "Obtener"
+   - **Alternativo**: Ve a https://python.org → "Downloads" → Descarga Python → **IMPORTANTE**: Marca la casilla "Add Python to PATH"
+
+2. **📥 Descarga VS Code**: 
+   - Ve a https://code.visualstudio.com/
+   - Haz clic en "Download for Windows"
+   - Instala normalmente
+
+3. **📦 Descarga este proyecto**: 
+   - Haz clic en el botón verde "Code" arriba en esta página
+   - Selecciona "Download ZIP"
+   - Extrae el archivo ZIP en tu escritorio o carpeta de documentos
+
+4. **📂 Abre el proyecto en VS Code**:
+   - Abre VS Code
+   - Ve al menú: `File` → `Open Folder...`
+   - Busca y selecciona la carpeta que acabas de extraer
+   - VS Code te preguntará si confías en la carpeta → Haz clic en "Yes, I trust"
+
+5. **🔧 Instala las extensiones**:
+   - VS Code te mostrará una notificación sobre extensiones recomendadas
+   - Haz clic en "Install" para instalarlas automáticamente
+   - Si no aparece, ve a Extensions (Ctrl+Shift+X) e instala "Python"
+
+6. **⚡ Abre la terminal en VS Code**:
+   - Ve al menú: `View` → `Terminal`
+   - Aparecerá una ventana negra en la parte inferior
+
+7. **🚀 Instala las dependencias**:
+   - En la terminal que acabas de abrir, escribe exactamente esto y presiona Enter:
+   ```
    .\install.ps1
-   
-   # Opción B: Command Prompt
+   ```
+   - Si da error, prueba con:
+   ```
    install.bat
    ```
-6. **🚀 Ejecuta el programa**:
-   ```powershell
-   # Opción 1
-   # Desde terminal
+   - Espera a que termine de instalar todo (puede tomar unos minutos)
+
+8. **🎉 Ejecuta el programa**:
+   - Una vez que termine la instalación, escribe:
+   ```
    .\run.ps1
-   
-   # Opción 2
-   # usar tareas: Ctrl+Shift+P → "Tasks: Run Task" → "Ejecutar Analizador"
+   ```
+   - O si prefieres:
+   ```
+   python graph_I_V.py
    ```
 
-### Opción 2: Sin VS Code (Más simple)
+**💡 Método aún más fácil con VS Code:**
+- Presiona `Ctrl+Shift+P`
+- Escribe "Tasks: Run Task"
+- Selecciona "Ejecutar Analizador"
 
-1. **🐍 Instala Python**: 
-   - **Microsoft Store**: Busca "Python 3.11" 
-   - **Web oficial**: https://python.org (marca "Add to PATH")
-2. **📦 Descarga el proyecto** "Download ZIP" → Extrae la carpeta
-3. **🖱️ Doble clic** en `install.bat` para instalar
-4. **🖱️ Al finalizar la instalación doble clic** en `run.bat` para ejecutar
+### Opción 2: Método simple (sin VS Code)
 
-### ⚡ Solución Rápida de Problemas en Windows
-- **"Python no encontrado"**: Instala desde Microsoft Store
-- **"Error PowerShell"**: Usa los archivos `.bat` en su lugar
-- **VS Code no detecta Python**: `Ctrl+Shift+P` → "Python: Select Interpreter"
+**📋 Para quienes prefieren algo más directo:**
+
+1. **🐍 Instala Python**:
+   - Ve a Microsoft Store → Busca "Python 3.11" → "Obtener"
+   - O desde https://python.org (marca "Add to PATH" durante instalación)
+
+2. **📦 Descarga el proyecto**:
+   - Botón "Code" → "Download ZIP" → Extrae en tu escritorio
+
+3. **🖱️ Ejecuta con doble clic**:
+   - Busca el archivo `install.bat` en la carpeta extraída
+   - Haz doble clic en `install.bat` → Espera a que termine
+   - Luego haz doble clic en `run.bat` para ejecutar el programa
+
+### ⚡ Solución rápida si algo no funciona
+
+| Problema | Solución |
+|----------|----------|
+| "Python no encontrado" | Instala Python desde Microsoft Store |
+| "Error de PowerShell" | Usa los archivos `.bat` en lugar de `.ps1` |
+| "Módulo no encontrado" | Ejecuta `pip install -r requirements.txt` en la terminal |
+| VS Code no detecta Python | Presiona `Ctrl+Shift+P` → "Python: Select Interpreter" |
+| La terminal no se abre | Ve a `View` → `Terminal` en VS Code |
+
+**🤝 ¿Necesitas ayuda?** No dudes en preguntar. Este programa está diseñado para ser fácil de usar para todas las personas, sin importar su experiencia con programación.
 
 ---
 
@@ -164,12 +213,10 @@ code .
 
 3. **📦 Descarga y ejecuta**:
    ```bash
-   # Opción 1
    # Descargar proyecto
    git clone [URL_DEL_REPOSITORIO] && cd graph
    
-   # Opción 2
-   # descargar ZIP y extraer
+   # O descargar ZIP y extraer
    curl -O [URL_ZIP] && unzip graph.zip && cd graph
    
    # Instalar y ejecutar
@@ -192,12 +239,11 @@ code .
 
 ---
 
-## 👨‍💻 Para Desarrolladores
+## 👩‍💻👨‍💻 Para Desarrolladoras y Desarrolladores
 
 ### Instalación Rápida
 
 ```bash
-# Opción 1
 # Clonar repositorio
 git clone [URL_DEL_REPOSITORIO]
 cd graph
@@ -205,8 +251,7 @@ cd graph
 # Crear entorno virtual (opcional pero recomendado)
 python -m venv venv
 source venv/bin/activate  # Linux/macOS
-
-# Opción 2
+# o
 venv\Scripts\activate     # Windows
 
 # Instalar dependencias
@@ -304,9 +349,9 @@ Una vez instalado, tienes **dos formas** de proporcionar tus datos:
 
 ## 📚 Documentación Completa
 
-- � **[ÍNDICE](INDICE.md)** - Navegación por todos los documentos
-- �📖 **[Guía Completa](GUIA_COMPLETA.md)** - Documentación detallada con todos los métodos
-- 🔧 **[Documentación Técnica](TECHNICAL_DOCS.md)** - Para desarrolladores
+- 📋 **[ÍNDICE](INDICE.md)** - Navegación por todos los documentos
+- 📖 **[Guía Completa](GUIA_COMPLETA.md)** - Documentación detallada con todos los métodos
+- 🔧 **[Documentación Técnica](TECHNICAL_DOCS.md)** - Para desarrolladoras y desarrolladores
 - 📄 **[Licencia](LICENSE)** - Términos de uso
 
 ---
@@ -322,7 +367,7 @@ Una vez instalado, tienes **dos formas** de proporcionar tus datos:
 ## ⭐ ¿Te Gusta Este Proyecto?
 
 - 🌟 **Dale una estrella** en GitHub
-- 🔄 **Compártelo** con colegas investigadores
+- 🔄 **Compártelo** con colegas investigadoras e investigadores
 - 🤝 **Contribuye** con mejoras
 - 📢 **Úsalo** en tus publicaciones (cita el proyecto)
 
@@ -330,7 +375,7 @@ Una vez instalado, tienes **dos formas** de proporcionar tus datos:
 
 <div align="center">
 
-**🔋 ¡Analiza tus celdas solares como un profesional! ☀️**
+**🔋 ¡Analiza tus celdas solares como una persona profesional! ☀️**
 
 ---
 

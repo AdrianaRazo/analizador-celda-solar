@@ -73,9 +73,9 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
     V = np.array(voltage, dtype=float)
     I = np.array(current, dtype=float)
     
-    print("=" * 60)
+    print("=" * 50)  # Línea más corta
     print(f"🔋 {titulo}")
-    print("=" * 60)
+    print("=" * 50)  # Línea más corta
     print(f"📊 Analizando {len(V)} puntos de medición...")
     print(f"📅 Fecha de análisis: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
@@ -248,6 +248,7 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
         
         # Mostrar gráficas
         try:
+            plt.savefig(nombre_imagen, dpi=300, bbox_inches='tight')
             plt.show()
         except:
             print("ℹ️  Gráficas guardadas pero no se pueden mostrar (entorno sin interfaz gráfica)")

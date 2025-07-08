@@ -13,8 +13,8 @@
 # 3. Ejecuta el programa usando run.bat (Windows) o ./run.sh (Linux/macOS)
 #
 # ⚠️ IMPORTANTE:
-# - Los voltajes deben estar en Voltios (V)
-# - Las corrientes deben estar en Amperios (A)
+# - Los voltajes deben estar en Volt (V)
+# - Las corrientes deben estar en Ampere (A)
 # - Debe haber el mismo número de voltajes y corrientes
 # - Los voltajes deben estar en orden ascendente
 #
@@ -27,10 +27,10 @@
 # 📊 TUS DATOS DE MEDICIÓN
 # =====================================================
 
-# Voltajes medidos (en Voltios) - ¡MODIFICA ESTOS VALORES!
+# Voltajes medidos (en Volt) - ¡MODIFICA ESTOS VALORES!
 voltajes = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
 
-# Corrientes medidas (en Amperios) - ¡MODIFICA ESTOS VALORES!
+# Corrientes medidas (en Ampere) - ¡MODIFICA ESTOS VALORES!
 corrientes = [0.5, 0.48, 0.45, 0.40, 0.30, 0.0]
 
 # =====================================================

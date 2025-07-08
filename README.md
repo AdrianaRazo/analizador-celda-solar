@@ -1,9 +1,41 @@
-# 🔋 Analizador de Celdas Solares con Python ☀️⚡
+# 🔋 Analizador de Celdas Solares - Versión 2.0 ☀️⚡
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Estable-brightgreen.svg)]()
 [![Author](https://img.shields.io/badge/Autor-Adriana%20Razo%20De%20León-purple.svg)]()
+
+---
+
+## 🎯 **¡NUEVO! Versión Notebook Interactivo**
+
+### 📱 **Para principiantes** (¡SIN programación requerida!)
+
+**🌟 Recomendación**: Usa el **Jupyter Notebook interactivo** - ¡Es súper fácil!
+
+<div align="center">
+
+| Plataforma | Enlace | Descripción |
+|------------|--------|-------------|
+| 📱 **Google Colab** | [▶️ Abrir Notebook](https://colab.research.google.com) | **Más fácil** - Solo subir archivo |
+| 💻 **VS Code** | [📓 Abrir archivo .ipynb](Analizador_Celdas_Solares.ipynb) | **Recomendado** - Completo |
+| 📓 **Jupyter** | [🔗 Instalar Jupyter](https://jupyter.org/install) | **Clásico** - Navegador web |
+
+</div>
+
+### 🚀 **¿Cómo usar el Notebook?**
+
+1. **📥 Descarga** el archivo `Analizador_Celdas_Solares.ipynb`
+2. **🌐 Abre** en Google Colab, VS Code, o Jupyter Notebook
+3. **▶️ Ejecuta** todas las celdas (botón "Run All")
+4. **📋 Sigue** las instrucciones paso a paso
+5. **🎉 ¡Disfruta** los resultados!
+
+**💡 Ventajas del Notebook**:
+- ✅ Sin instalación de programas
+- ✅ Instrucciones paso a paso
+- ✅ Funciona en cualquier dispositivo
+- ✅ Perfecto para principiantes
 
 ---
 
@@ -34,7 +66,9 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 
 ---
 
-## 🚀 Instalación Rápida por Sistema Operativo
+## �️ **Para desarrolladores** (Instalación tradicional)
+
+### �🚀 Instalación Rápida por Sistema Operativo
 
 **👆 Selecciona tu sistema operativo para instrucciones específicas:**
 
@@ -49,7 +83,7 @@ Este programa profesional analiza datos experimentales de corriente y voltaje de
 
 </div>
 
-> 💡 **¿Primera vez con Python?** → Empieza con [Windows](#-windows-1011) o [Linux](#-linux-ubuntudebian)  
+> 💡 **¿Primera vez con Python?** → Mejor usa el **[Notebook interactivo](#-nuevo-versión-notebook-interactivo)** ↑  
 > 🚀 **¿Quieres lo más rápido?** → Ve a [Desarrolladoras/es](#-para-desarrolladoras-y-desarrolladores)
 
 ---

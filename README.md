@@ -17,7 +17,7 @@
 
 | Plataforma | Enlace | Descripción |
 |------------|--------|-------------|
-| 📱 **Google Colab** | [▶️ Abrir Notebook](https://colab.research.google.com) | **Más fácil** - Solo subir archivo |
+| 📱 **Google Colab** | [▶️ Abrir Notebook](https://drive.google.com/file/d/1_gOVvUh3uiuuAjivgtSkY0d2dJ3RL_3F/view?usp=sharing) | **Más fácil** |
 | 💻 **VS Code** | [📓 Abrir archivo .ipynb](Analizador_Celdas_Solares.ipynb) | **Recomendado** - Completo |
 | 📓 **Jupyter** | [🔗 Instalar Jupyter](https://jupyter.org/install) | **Clásico** - Navegador web |
 

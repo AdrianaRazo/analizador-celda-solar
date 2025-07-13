@@ -23,7 +23,7 @@ usar_archivo_csv = True  # Cambiar a True para usar CSV
 # - Columnas: V,I o Voltage,Current o Voltaje,Corriente 
 # - Separadores: coma, punto y coma o tabulación
 # - Con o sin encabezados
-archivo_csv = "ejemplo2.csv"  # Cambia por la ruta de tu archivo
+archivo_csv = "1368h.csv"  # Cambia por la ruta de tu archivo
 
 # ==========================================
 # DATOS DIRECTOS (solo si usar_archivo_csv = False)

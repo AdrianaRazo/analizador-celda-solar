@@ -5,6 +5,7 @@ curvas_IV_PV_*.png
 # Mantener archivos de ejemplo
 !curvas_IV_PV.png
 !resultados_celda.csv
+.csv
 
 # Configuración local de VS Code (mantener configuración base)
 .vscode/settings.json

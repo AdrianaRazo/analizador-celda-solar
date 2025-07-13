@@ -41,99 +41,88 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
                   guardar_imagen=True):
     """
     Analiza una celda solar a partir de datos de corriente y voltaje.
-    
-    Parámetros:
-    -----------
-    voltage : list o array
-        Valores de voltaje medidos (V)
-    current : list o array  
-        Valores de corriente medidos (A)
-    irradiancia : float, opcional
-        Irradiancia solar en W/m² (default: None)
-    area : float, opcional
-        Área de la celda en m² (default: None)
-    titulo : str, opcional
-        Título para las gráficas (default: "Análisis de Celda Solar")
-    mostrar_eficiencia : bool, opcional
-        Mostrar eficiencia en la gráfica I-V (default: True)
-    guardar_imagen : bool, opcional
-        Guardar gráficas como archivo PNG (default: True)
-    
-    Retorna:
-    --------
-    dict : Diccionario con todos los parámetros calculados
+    Calcula parámetros en unidades de mA/cm², mW/cm², etc., como en el notebook.
+    Retorna resultados y las figuras de matplotlib.
     """
     if len(voltage) != len(current):
         raise ValueError("Los arrays de voltaje y corriente deben tener la misma longitud")
     if len(voltage) < 3:
         raise ValueError("Se requieren al menos 3 puntos de medición")
-    
+
     # Convertir a arrays NumPy
     V = np.array(voltage, dtype=float)
     I = np.array(current, dtype=float)
-    
+
+    # --- Cálculo de parámetros al estilo del notebook ---
+    # 1. Jsc (Densidad de corriente de cortocircuito): I(V=0)
+    try:
+        f_v = interpolate.interp1d(V, I, kind='linear', fill_value='extrapolate')
+        Jsc = float(f_v(0.0))
+    except Exception:
+        Jsc = I[np.argmin(np.abs(V))]
+
+    # 2. Voc (Voltaje de circuito abierto): V(I=0)
+    try:
+        f_i = interpolate.interp1d(I, V, kind='linear', fill_value='extrapolate')
+        Voc = float(f_i(0.0))
+    except Exception:
+        Voc = V[np.argmax(V)]
+
+    # 3. Pmax, Vmp, Imp (usar corriente absoluta para potencia útil)
+    I_inver = -I  # Corriente invertida para que P sea positiva
+    P = V * I_inver
+    idx_max = np.argmax(P)
+    Vmp = V[idx_max]
+    Imp = I_inver[idx_max]
+    Pmax = Vmp * Imp
+
+    # 4. FF (Factor de llenado, %)
+    if Jsc != 0 and Voc != 0:
+        FF = (abs(Pmax)) / (abs(Jsc) * abs(Voc)) * 100
+    else:
+        FF = 0
+
+    # 5. PCE relativa (sin área ni irradiancia)
+    PCE = abs(Jsc) * abs(Voc) * FF / 100
+
+    # 6. Si hay irradiancia y área, calcular eficiencia absoluta
+    eficiencia = None
+    if irradiancia and area and irradiancia > 0 and area > 0:
+        Pin = irradiancia * area
+        eficiencia = Pmax / Pin if Pin > 0 else None
+    else:
+        eficiencia = PCE  # PCE relativa (%)
+
+    # Mostrar resultados
     print("=" * 50)
     print(f"🔋 {titulo}")
     print("=" * 50)
     print(f"📊 Analizando {len(V)} puntos de medición...")
     print(f"📅 Fecha de análisis: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-    
-    # Cálculo de Isc: punto donde V es más cercano a 0
-    Isc = I[np.argmin(np.abs(V))]
-    
-    # Cálculo de Voc: Interpolación para obtener V cuando I = 0.
-    try:
-        f_iv = interpolate.interp1d(I, V, kind='linear', fill_value="extrapolate")
-        Voc = float(f_iv(0.0))
-    except ValueError:
-        Voc = V[I > 0][-1] if len(V[I > 0]) > 0 else V[-1]
-    
-    # Cálculo de potencia y puntos de máxima potencia
-    P = V * I
-    idx_max = np.argmax(P)
-    Vmp, Imp, Pmp = V[idx_max], I[idx_max], P[idx_max]
-    
-    # Calcular Fill Factor
-    FF = Pmp / (Isc * Voc) if (Isc > 0 and Voc > 0) else 0
-    if FF == 0:
-        print("⚠️  Advertencia: No se puede calcular FF (Isc o Voc es cero)")
-    
-    # Calcular eficiencia si se proporcionan irradiancia y área
-    eta = None
-    if irradiancia is not None and area is not None and irradiancia > 0 and area > 0:
-        Pin = irradiancia * area  # Potencia de entrada
-        eta = Pmp / Pin if Pin > 0 else 0
-    
-    # Mostrar resultados
-    print("📋 RESULTADOS DEL ANÁLISIS:")
-    print("-" * 40)
-    print(f"🔌 Corriente de cortocircuito (Isc): {Isc:.4f} A")
-    print(f"⚡ Voltaje de circuito abierto (Voc): {Voc:.4f} V")
-    print(f"🔋 Corriente en punto máx. potencia (Imp): {Imp:.4f} A")
-    print(f"🔋 Voltaje en punto máx. potencia (Vmp): {Vmp:.4f} V")
-    print(f"⚡ Potencia máxima (Pmax): {Pmp:.4f} W")
-    print(f"📊 Factor de llenado (FF): {FF*100:.2f} %")
-    if eta is not None:
-        print(f"🌟 Eficiencia (η): {eta*100:.2f} %")
-        print(f"   📝 Condiciones: {irradiancia} W/m², área: {area} m²")
-    else:
-        print("ℹ️  Eficiencia no calculada (falta irradiancia o área)")
+    print("📈 PARÁMETROS PRINCIPALES:")
+    print(f"  • Jsc (Densidad de corriente cortocircuito): {Jsc:.4f} mA/cm²")
+    print(f"  • Voc (Voltaje circuito abierto): {Voc:.4f} V")
+    print(f"  • Imp (Corriente máxima potencia): {Imp:.4f} mA/cm²")
+    print(f"  • Vmp (Voltaje máxima potencia): {Vmp:.4f} V")
+    print(f"  • Pmax (Potencia máxima): {Pmax:.4f} mW/cm²")
+    print(f"  • FF (Factor de llenado): {FF:.2f}%")
+    print(f"  • η (Eficiencia/PCE relativa): {eficiencia:.2f}%")
     print()
-    
+
     resultados = {
-        'Isc': Isc,
-        'Voc': Voc,
-        'Imp': Imp,
-        'Vmp': Vmp,
-        'Pmax': Pmp,
+        'Jsc': abs(Jsc),
+        'Voc': abs(Voc),
+        'Imp': abs(Imp),
+        'Vmp': abs(Vmp),
+        'Pmax': abs(Pmax),
         'FF': FF,
-        'Eficiencia': eta,
+        'Eficiencia': eficiencia,
         'Voltajes': V,
-        'Corrientes': I,
+        'DensidadCorriente': I_inver,
         'Potencias': P
     }
-    
-    # Exportar resultados a CSV
+
+    # Exportar resultados a CSV (opcional)
     print("💾 Exportando resultados a CSV...")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     archivo_csv = f"resultados_celda_{timestamp}.csv"
@@ -143,78 +132,71 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
             writer.writerow([f"Análisis de Celda Solar - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
             writer.writerow([])
             writer.writerow(["=== DATOS EXPERIMENTALES ==="])
-            writer.writerow(["Voltaje (V)", "Corriente (A)", "Potencia (W)"])
+            writer.writerow(["Voltaje (V)", "Corriente (A)", "Potencia (mW/cm²)"])
             for v, i_val, p in zip(V, I, P):
                 writer.writerow([f"{v:.4f}", f"{i_val:.4f}", f"{p:.4f}"])
             writer.writerow([])
             writer.writerow(["=== PARÁMETROS CARACTERÍSTICOS ==="])
             writer.writerow(["Parámetro", "Valor", "Unidad"])
-            writer.writerow(["Corriente de cortocircuito (Isc)", f"{Isc:.4f}", "A"])
+            writer.writerow(["Densidad de corriente cortocircuito (Jsc)", f"{Jsc:.4f}", "mA/cm²"])
             writer.writerow(["Voltaje de circuito abierto (Voc)", f"{Voc:.4f}", "V"])
-            writer.writerow(["Corriente máx. potencia (Imp)", f"{Imp:.4f}", "A"])
+            writer.writerow(["Corriente máx. potencia (Imp)", f"{Imp:.4f}", "mA/cm²"])
             writer.writerow(["Voltaje máx. potencia (Vmp)", f"{Vmp:.4f}", "V"])
-            writer.writerow(["Potencia máxima (Pmax)", f"{Pmp:.4f}", "W"])
-            writer.writerow(["Factor de llenado (FF)", f"{FF*100:.2f}", "%"])
-            if eta is not None:
-                writer.writerow(["Eficiencia (η)", f"{eta*100:.2f}", "%"])
+            writer.writerow(["Potencia máxima (Pmax)", f"{Pmax:.4f}", "mW/cm²"])
+            writer.writerow(["Factor de llenado (FF)", f"{FF:.2f}", "%"])
+            writer.writerow(["Eficiencia (η)", f"{eficiencia:.2f}", "%"])
+            if irradiancia is not None:
                 writer.writerow(["Irradiancia", f"{irradiancia}", "W/m²"])
+            if area is not None:
                 writer.writerow(["Área de la celda", f"{area}", "m²"])
         print(f"✅ Resultados guardados en: {archivo_csv}")
     except Exception as e:
         print(f"❌ Error al guardar CSV: {e}")
         archivo_csv = "resultados_celda.csv"  # Fallback
-    
-    # Generar gráficas
-    print("📈 Generando gráficas...")
+
+    # Generar figuras y retornarlas
+    print("📈 Generando gráficas (retornando objetos de figura)...")
     try:
         plt.style.use('default')
         plt.rcParams['font.size'] = 10
         plt.rcParams['axes.linewidth'] = 1.2
         plt.rcParams['grid.alpha'] = 0.3
-    
+
         fig, ax = plt.subplots(1, 2, figsize=(14, 6))
         fig.suptitle(titulo, fontsize=16, fontweight='bold')
-    
-        # Gráfica I-V
-        ax[0].plot(V, I, '-o', linewidth=2, markersize=6, label='Curva I-V', color='#2E86AB')
-        ax[0].plot([Vmp], [Imp], 'ko', markersize=8, label=f'Pmax = {Pmp:.3f} W')
-        ax[0].plot([0, Voc], [Isc, 0], 'r--', linewidth=2, alpha=0.7, label='Rectángulo ideal')
+
+        # Gráfica I-V (Densidad de corriente)
+        ax[0].plot(V, I_inver, '-o', linewidth=2, markersize=6, label='Curva I-V', color='#2E86AB')
+        ax[0].plot([Vmp], [Imp], 'ko', markersize=8, label=f'Pmax = {Pmax:.3f} mW/cm²')
+        ax[0].plot([0, Voc], [Jsc, 0], 'r--', linewidth=2, alpha=0.7, label='Rectángulo ideal')
         ax[0].plot([Vmp, Vmp], [0, Imp], 'k--', linewidth=1, alpha=0.5)
         ax[0].plot([0, Vmp], [Imp, Imp], 'k--', linewidth=1, alpha=0.5)
         ax[0].set_title("Curva Corriente-Voltaje (I-V)", fontweight='bold')
         ax[0].set_xlabel("Voltaje (V)")
-        ax[0].set_ylabel("Corriente (A)")
+        ax[0].set_ylabel("Densidad de corriente (mA/cm²)")
         ax[0].grid(True, alpha=0.3)
         ax[0].legend(frameon=True, fancybox=True, shadow=True)
-    
-        if eta is not None and mostrar_eficiencia:
-            ax[0].text(0.05 * Voc, 0.9 * Isc, f"η = {eta*100:.2f}%", fontsize=12,
-                       fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.8))
-    
-        # Gráfica P-V
+        ax[0].text(0.05 * Voc, 0.9 * Jsc, f"η = {eficiencia:.2f}%", fontsize=12,
+                   fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.8))
+
+        # Gráfica P-V (Potencia por área)
         ax[1].plot(V, P, '-o', linewidth=2, markersize=6, color='#A23B72', label='Curva P-V')
-        ax[1].plot(Vmp, Pmp, 'ks', markersize=8, label=f'Pmax = {Pmp:.3f} W')
+        ax[1].plot(Vmp, Pmax, 'ks', markersize=8, label=f'Pmax = {Pmax:.3f} mW/cm²')
         ax[1].set_title("Curva Potencia-Voltaje (P-V)", fontweight='bold')
         ax[1].set_xlabel("Voltaje (V)")
-        ax[1].set_ylabel("Potencia (W)")
+        ax[1].set_ylabel("Potencia (mW/cm²)")
         ax[1].grid(True, alpha=0.3)
         ax[1].legend(frameon=True, fancybox=True, shadow=True)
-    
+
         plt.tight_layout()
-        
-        if guardar_imagen:
-            timestamp_img = datetime.now().strftime("%Y%m%d_%H%M%S")
-            nombre_imagen = f"curvas_IV_PV_{timestamp_img}.png"
-            plt.savefig(nombre_imagen, dpi=300, bbox_inches='tight')
-            print(f"✅ Gráficas guardadas en: {nombre_imagen}")
-    
-        plt.show()
-        
+        # No mostrar ni guardar aquí, solo retornar la figura
+        print("✅ Figuras generadas y retornadas")
     except Exception as e:
         print(f"❌ Error al generar gráficas: {e}")
-    
+        fig = None
+
     print("\n🎉 Análisis completado exitosamente!")
-    return resultados
+    return resultados, fig
 
 
 def cargar_datos_csv(archivo_csv):
@@ -414,7 +396,7 @@ def main():
     if config_data and config_data['voltajes'] and config_data['corrientes']:
         fuente = config_data.get('fuente_datos', 'configuración')
         print(f"📂 Usando datos de: {fuente}")
-        resultados = analiza_celda(
+        resultados, _ = analiza_celda(
             voltage=config_data['voltajes'],
             current=config_data['corrientes'],
             irradiancia=config_data['irradiancia'],
@@ -429,7 +411,7 @@ def main():
         V_ejemplo = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
         I_ejemplo = [0.5, 0.48, 0.45, 0.40, 0.30, 0.0]
     
-        resultados = analiza_celda(
+        resultados, _ = analiza_celda(
             voltage=V_ejemplo,
             current=I_ejemplo,
             irradiancia=1000,
@@ -459,3 +441,20 @@ if __name__ == "__main__":
         print("📞 Si el problema persiste, consulta la documentación o contacta soporte")
     finally:
         input("\n🔚 Presiona Enter para salir...")
+    print("• Las gráficas se guardan como archivos PNG")
+    print("• Consulta el README.md para más información")
+
+
+if __name__ == "__main__":
+    try:
+        resultados = main()
+        print("\n✨ ¡Programa ejecutado exitosamente! ✨")
+    except KeyboardInterrupt:
+        print("\n\n⏹️  Programa interrumpido por el usuario")
+    except Exception as e:
+        print(f"\n❌ Error inesperado: {e}")
+        print("📞 Si el problema persiste, consulta la documentación o contacta soporte")
+    finally:
+        input("\n🔚 Presiona Enter para salir...")
+    print("• Las gráficas se guardan como archivos PNG")
+    print("• Consulta el README.md para más información")

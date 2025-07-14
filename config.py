@@ -39,11 +39,8 @@ corrientes = [0.5, 0.48, 0.45, 0.40, 0.30, 0.0]
 # CONFIGURACIÓN DEL ANÁLISIS
 # ==========================================
 
-# Condiciones de medición (opcional para calcular eficiencia)
-irradiancia = 1.9  # W/m² (1000 para condiciones estándar STC)
-area_celda = 9e-6  # m² (área de la celda solar en metros cuadrados)
 
 # Configuración de las gráficas
-titulo_grafica = "Análisis de Celda Solar"
+titulo_grafica = "graph_I_V.png"  # Nombre del archivo de la gráfica
 mostrar_eficiencia = True  # True para mostrar eficiencia en la gráfica
 guardar_imagen = True      # True para guardar las gráficas como PNG

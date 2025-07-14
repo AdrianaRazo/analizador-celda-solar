@@ -160,8 +160,7 @@ pandas>=1.3.0
 ### 📱 Google Colab:
 1. Ve a [colab.research.google.com](https://colab.research.google.com)
 2. Sube el archivo `Analizador_Celdas_Solares.ipynb`
-3. Ejecuta todas las celdas
-4. Sube tu archivo CSV cuando se te solicite
+3. Ejecuta las celdas según lo requieras
 
 ### 💻 VS Code:
 1. Instala las extensiones Python y Jupyter

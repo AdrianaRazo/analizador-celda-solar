@@ -1,11 +1,13 @@
 # Archivos específicos del proyecto
 resultados_celda_*.csv
 curvas_IV_PV_*.png
+*.png
 
 # Mantener archivos de ejemplo
 !curvas_IV_PV.png
 !resultados_celda.csv
-.csv
+!.csv
+1368h.csv
 
 # Configuración local de VS Code (mantener configuración base)
 .vscode/settings.json

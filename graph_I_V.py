@@ -36,7 +36,7 @@ import pandas as pd
 from datetime import datetime
 
 
-def analiza_celda(voltage, current, irradiancia=None, area=None, 
+def analiza_celda(voltage, current, 
                   titulo="Análisis de Celda Solar", mostrar_eficiencia=True, 
                   guardar_imagen=True):
     """
@@ -85,13 +85,8 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
     # 5. PCE relativa (sin área ni irradiancia)
     PCE = abs(Jsc) * abs(Voc) * FF / 100
 
-    # 6. Si hay irradiancia y área, calcular eficiencia absoluta
-    eficiencia = None
-    if irradiancia and area and irradiancia > 0 and area > 0:
-        Pin = irradiancia * area
-        eficiencia = Pmax / Pin if Pin > 0 else None
-    else:
-        eficiencia = PCE  # PCE relativa (%)
+    # 6. Elimina cálculo de eficiencia absoluta, solo PCE relativa
+    eficiencia = PCE  # PCE relativa (%)
 
     # Mostrar resultados
     print("=" * 50)
@@ -145,10 +140,7 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
             writer.writerow(["Potencia máxima (Pmax)", f"{Pmax:.4f}", "mW/cm²"])
             writer.writerow(["Factor de llenado (FF)", f"{FF:.2f}", "%"])
             writer.writerow(["Eficiencia (η)", f"{eficiencia:.2f}", "%"])
-            if irradiancia is not None:
-                writer.writerow(["Irradiancia", f"{irradiancia}", "W/m²"])
-            if area is not None:
-                writer.writerow(["Área de la celda", f"{area}", "m²"])
+            # Elimina exportación de irradiancia y área
         print(f"✅ Resultados guardados en: {archivo_csv}")
     except Exception as e:
         print(f"❌ Error al guardar CSV: {e}")
@@ -168,7 +160,12 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
         # Gráfica I-V (Densidad de corriente)
         ax[0].plot(V, I_inver, '-o', linewidth=2, markersize=6, label='Curva I-V', color='#2E86AB')
         ax[0].plot([Vmp], [Imp], 'ko', markersize=8, label=f'Pmax = {Pmax:.3f} mW/cm²')
-        ax[0].plot([0, Voc], [Jsc, 0], 'r--', linewidth=2, alpha=0.7, label='Rectángulo ideal')
+        # Dibujar el rectángulo FF en la gráfica I-V
+        v0 = V[0]
+        i0 = I_inver[0]
+        rect_x = [v0, Vmp, Vmp, v0]
+        rect_y = [i0, i0, Imp, Imp]
+        ax[0].fill(rect_x, rect_y, color='orange', alpha=0.3, label='Rectángulo FF')
         ax[0].plot([Vmp, Vmp], [0, Imp], 'k--', linewidth=1, alpha=0.5)
         ax[0].plot([0, Vmp], [Imp, Imp], 'k--', linewidth=1, alpha=0.5)
         ax[0].set_title("Curva Corriente-Voltaje (I-V)", fontweight='bold')
@@ -177,7 +174,7 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
         ax[0].grid(True, alpha=0.3)
         ax[0].legend(frameon=True, fancybox=True, shadow=True)
         ax[0].text(0.05 * Voc, 0.9 * Jsc, f"η = {eficiencia:.2f}%", fontsize=12,
-                   fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.8))
+                fontweight='bold', bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.8))
 
         # Gráfica P-V (Potencia por área)
         ax[1].plot(V, P, '-o', linewidth=2, markersize=6, color='#A23B72', label='Curva P-V')
@@ -189,7 +186,10 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
         ax[1].legend(frameon=True, fancybox=True, shadow=True)
 
         plt.tight_layout()
-        # No mostrar ni guardar aquí, solo retornar la figura
+        if guardar_imagen:
+            nombre_archivo = titulo if titulo.endswith('.png') else "graph_I_V.png"
+            fig.savefig(nombre_archivo, dpi=300)
+            print(f"✅ Gráfica guardada como: {nombre_archivo}")
         print("✅ Figuras generadas y retornadas")
     except Exception as e:
         print(f"❌ Error al generar gráficas: {e}")
@@ -201,101 +201,117 @@ def analiza_celda(voltage, current, irradiancia=None, area=None,
 
 def cargar_datos_csv(archivo_csv):
     """
-    Carga datos de voltaje y corriente desde un archivo CSV.
-    
-    El archivo CSV puede tener varios formatos:
-    1. Dos columnas: Voltaje, Corriente
-    2. Columnas con nombres: V, I, Voltage, Current, etc.
-    3. Separadores: coma, punto y coma o tabulación
-    
-    Parámetros:
-    -----------
-    archivo_csv : str
-        Ruta al archivo CSV con los datos
-    
-    Retorna:
-    --------
-    tuple : (voltajes, corrientes) como listas
+    Carga datos de voltaje y corriente desde un archivo CSV/TSV con detección automática de formato,
+    manejo de comentarios y encabezados.
     """
     if not os.path.exists(archivo_csv):
         raise FileNotFoundError(f"No se encontró el archivo: {archivo_csv}")
-    
+
     print(f"📂 Cargando datos desde: {archivo_csv}")
-    
+
     try:
-        with open(archivo_csv, 'r', encoding='utf-8') as file:
-            sample = file.read(1024)
-            file.seek(0)
-            separadores = [",", ";", "\t"]
-            separador = max(separadores, key=lambda sep: sample.count(sep))
-        
-        try:
-            df = pd.read_csv(archivo_csv, sep=separador)
-            voltage_cols = ['V', 'Voltage', 'Voltaje', 'voltage', 'v', 'voltaje']
-            current_cols = ['I', 'Current', 'Corriente', 'current', 'i', 'corriente']
-    
-            voltage_col, current_col = None, None
-            for col in df.columns:
-                col_clean = col.strip()
-                if col_clean in voltage_cols or 'volt' in col_clean.lower():
-                    voltage_col = col
-                elif col_clean in current_cols or 'curr' in col_clean.lower() or 'amp' in col_clean.lower():
-                    current_col = col
-            
-            if voltage_col is None or current_col is None:
-                if len(df.columns) >= 2:
-                    voltage_col, current_col = df.columns[0], df.columns[1]
-                    print(f"⚠️  Usando columnas por posición: '{voltage_col}' como voltaje, '{current_col}' como corriente")
-                else:
-                    raise ValueError("El archivo CSV debe tener al menos 2 columnas")
-    
-            voltajes = df[voltage_col].dropna().tolist()
-            corrientes = df[current_col].dropna().tolist()
-    
-        except ImportError:
-            voltajes, corrientes = [], []
-            with open(archivo_csv, 'r', encoding='utf-8') as file:
-                reader = csv.reader(file, delimiter=separador)
-                primera_fila = next(reader, None)
-                try:
-                    float(primera_fila[0])
-                    float(primera_fila[1])
-                    voltajes.append(float(primera_fila[0]))
-                    corrientes.append(float(primera_fila[1]))
-                except (ValueError, IndexError):
-                    pass
-                for fila in reader:
-                    if len(fila) >= 2:
-                        try:
-                            v = float(fila[0].replace(",", "."))
-                            i = float(fila[1].replace(",", "."))
-                            voltajes.append(v)
-                            corrientes.append(i)
-                        except ValueError:
-                            continue
-        
-        if not voltajes or not corrientes:
-            raise ValueError("No se pudieron cargar datos válidos del archivo CSV")
-        if len(voltajes) != len(corrientes):
-            m = min(len(voltajes), len(corrientes))
-            voltajes, corrientes = voltajes[:m], corrientes[:m]
-            print(f"⚠️  Ajustando longitud de arrays: {m} puntos")
-    
-        print(f"✅ Datos cargados exitosamente: {len(voltajes)} puntos")
-        print(f"   📊 Rango de voltaje: {min(voltajes):.3f} - {max(voltajes):.3f} V")
-        print(f"   📊 Rango de corriente: {min(corrientes):.6f} - {max(corrientes):.6f} A")
-    
-        return voltajes, corrientes
-        
+        # Leer primeras líneas para detectar separador
+        with open(archivo_csv, 'r', encoding='utf-8') as f:
+            primeras_lineas = [f.readline() for _ in range(5)]
+
+        # Detectar separador
+        separador = '\t'  # Por defecto tabulación como en 1368h.csv
+        for linea in primeras_lineas:
+            if '\t' in linea:
+                separador = '\t'
+                print("✅ Formato detectado: Archivo separado por tabulaciones (TSV)")
+                break
+            elif ';' in linea:
+                separador = ';'
+                print("✅ Formato detectado: CSV con punto y coma")
+                break
+            elif ',' in linea:
+                separador = ','
+                print("✅ Formato detectado: CSV con comas")
+                break
+
+        # Leer archivo y extraer datos
+        voltajes = []
+        corrientes = []
+
+        with open(archivo_csv, 'r', encoding='utf-8') as f:
+            lineas = f.readlines()
+
+            # Verificar si hay líneas de comentario
+            tiene_comentarios = any(linea.strip().startswith('//') for linea in lineas[:5])
+            if tiene_comentarios:
+                print("✅ El archivo contiene líneas de comentario")
+
+            # Verificar si tiene encabezados
+            tiene_encabezados = False
+            for i, linea in enumerate(lineas):
+                if not linea.strip().startswith('//'):
+                    limpia = linea.strip().replace('"', '')
+                    if 'voltaje' in limpia.lower() or 'corriente' in limpia.lower():
+                        tiene_encabezados = True
+                        print("✅ El archivo contiene encabezados")
+                    break
+
+            # Procesar cada línea
+            for i, linea in enumerate(lineas):
+                # Saltar comentarios
+                if linea.strip().startswith('//'):
+                    continue
+
+                # Limpiar línea (quitar comillas y espacios)
+                linea_limpia = linea.strip().replace('"', '')
+
+                # Saltar encabezados
+                if i == 0 and tiene_encabezados and ('voltaje' in linea_limpia.lower() or 'corriente' in linea_limpia.lower()):
+                    continue
+
+                # Dividir según el separador
+                partes = linea_limpia.split(separador)
+
+                # Extraer datos si hay al menos dos columnas
+                if len(partes) >= 2:
+                    try:
+                        v = float(partes[0])
+                        c = float(partes[1])
+                        voltajes.append(v)
+                        corrientes.append(c)
+                    except ValueError:
+                        # Probablemente encabezado o texto, ignorar
+                        pass
+
+        # Verificar que se hayan encontrado datos
+        if voltajes and corrientes:
+            print(f"✅ Datos cargados: {len(voltajes)} puntos")
+            print(f"📊 Rango voltaje: {min(voltajes):.3f} - {max(voltajes):.3f} V")
+            print(f"📊 Rango corriente: {min(corrientes):.6f} - {max(corrientes):.6f} A")
+
+            # Mostrar vista previa de los datos
+            print("\n📋 Vista previa de los datos (primeros 5 puntos):")
+            print("   Voltaje   |   Corriente")
+            print("  -----------|-------------")
+            for v, c in zip(voltajes[:5], corrientes[:5]):
+                print(f"   {v:8.3f}  |   {c:8.3f}")
+            if len(voltajes) > 5:
+                print(f"   ... y {len(voltajes)-5} puntos más")
+
+            print("\n🎯 Archivo cargado exitosamente!")
+            print("👇 Continúa con el 'PASO 2'")
+            return voltajes, corrientes
+        else:
+            print("❌ No se encontraron datos válidos en el archivo")
+            print("💡 Asegúrate de que el archivo tenga el formato correcto")
+            return [], []
+
     except Exception as e:
-        raise ValueError(f"Error al leer el archivo CSV: {e}")
+        print(f"❌ Error al procesar archivo: {e}")
+        return [], []
 
 
 def crear_csv_ejemplo():
     """
     Crea un archivo CSV de ejemplo con datos típicos de una celda solar.
     """
-    archivo_ejemplo = "datos_ejemplo.csv"
+    archivo_ejemplo = "datos_graph_I_V.csv"
     voltajes = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
     corrientes = [0.52, 0.51, 0.50, 0.48, 0.45, 0.41, 0.35, 0.27, 0.16, 0.08, 0.0]
     
@@ -332,9 +348,9 @@ def cargar_configuracion():
                     respuesta = input("💡 ¿Deseas crear un archivo CSV de ejemplo? (s/n): ").lower().strip()
                     if respuesta in ['s', 'si', 'sí', 'y', 'yes']:
                         crear_csv_ejemplo()
-                        print("✅ Archivo de ejemplo creado: datos_ejemplo.csv")
+                        print("✅ Archivo de ejemplo creado: datos_graph_I_V.csv")
                         print("📝 Puedes usar este archivo como plantilla o cambiar la ruta en config.py")
-                        archivo_csv = "datos_ejemplo.csv"
+                        archivo_csv = "datos_graph_I_V.csv"
                     else:
                         print("❌ No se puede continuar sin datos. Verifica config.py")
                         return None
@@ -353,9 +369,8 @@ def cargar_configuracion():
         configuracion = {
             'voltajes': voltajes,
             'corrientes': corrientes,
-            'irradiancia': getattr(config, 'irradiancia', None),
-            'area_celda': getattr(config, 'area_celda', None),
-            'titulo_grafica': getattr(config, 'titulo_grafica', "Análisis de Celda Solar"),
+            # Elimina irradiancia y area_celda
+            'titulo_grafica': getattr(config, 'titulo_grafica', "graph_I_V.png"),
             'mostrar_eficiencia': getattr(config, 'mostrar_eficiencia', True),
             'guardar_imagen': getattr(config, 'guardar_imagen', True),
             'fuente_datos': fuente_datos,
@@ -399,8 +414,6 @@ def main():
         resultados, _ = analiza_celda(
             voltage=config_data['voltajes'],
             current=config_data['corrientes'],
-            irradiancia=config_data['irradiancia'],
-            area=config_data['area_celda'],
             titulo=config_data['titulo_grafica'],
             mostrar_eficiencia=config_data['mostrar_eficiencia'],
             guardar_imagen=config_data['guardar_imagen']
@@ -414,8 +427,6 @@ def main():
         resultados, _ = analiza_celda(
             voltage=V_ejemplo,
             current=I_ejemplo,
-            irradiancia=1000,
-            area=0.01,
             titulo="Análisis de Celda Solar (Datos de Ejemplo)"
         )
     
@@ -442,10 +453,6 @@ if __name__ == "__main__":
     finally:
         input("\n🔚 Presiona Enter para salir...")
     print("• Las gráficas se guardan como archivos PNG")
-    print("• Consulta el README.md para más información")
-
-
-if __name__ == "__main__":
     try:
         resultados = main()
         print("\n✨ ¡Programa ejecutado exitosamente! ✨")

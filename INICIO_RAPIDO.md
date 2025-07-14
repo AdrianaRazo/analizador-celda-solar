@@ -57,7 +57,7 @@
 
 ## 📞 Contacto:
 
-**📧 Email**: adrianarazo@outlook.com  
+**📧 Email**: adrianarazo.leon@gmail.com  
 **📖 Manual completo**: README.md  
 
 ---
